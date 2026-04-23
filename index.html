@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-
-  <head>
+<head>
   <script type="text/javascript"
     src="https://tableau.github.io/extensions-api/lib/tableau.extensions.1.latest.js">
   </script>
@@ -11,31 +10,23 @@
 
   <button onclick="run()">Explain</button>
 
-  <p id="result">Clique sur Explain</p>
+  <p id="result">Test</p>
 
   <script>
     async function run() {
 
+      if (typeof tableau === "undefined") {
+        document.getElementById("result").innerText = "Tableau API NON chargée";
+        return;
+      }
+
       try {
-        document.getElementById("result").innerText = "Initialisation...";
-
         await tableau.extensions.initializeAsync();
-
-        document.getElementById("result").innerText = "Connexion au dashboard...";
 
         const dashboard = tableau.extensions.dashboardContent.dashboard;
 
-        const worksheets = dashboard.worksheets;
-
         document.getElementById("result").innerText =
-          "Nombre de feuilles: " + worksheets.length;
-
-        const worksheet = worksheets[0];
-
-        const data = await worksheet.getSummaryDataAsync();
-
-        document.getElementById("result").innerText =
-          "Nombre de lignes: " + data.data.length;
+          "Worksheets: " + dashboard.worksheets.length;
 
       } catch (error) {
         document.getElementById("result").innerText =
