@@ -14,8 +14,19 @@
     async function run() {
 
   try {
-    const dashboard = tableau.extensions.dashboardContent.dashboard;
+    await tableau.extensions.initializeAsync();
+
+    const dashboard = tableau.extensions.dashboardContent?.dashboard;
+
+    if (!dashboard) {
+      throw new Error("Dashboard non accessible");
+    }
+
     const worksheet = dashboard.worksheets[0];
+
+    if (!worksheet) {
+      throw new Error("Aucune worksheet trouvée");
+    }
 
     const data = await worksheet.getSummaryDataAsync();
 
