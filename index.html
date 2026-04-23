@@ -1,3 +1,19 @@
-function run() {
-  alert("Bouton OK");
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://tableau.github.io/extensions-api/lib/tableau.extensions.1.latest.js"></script>
+</head>
+
+<body>
+
+  <button onclick="run()">Explain</button>
+
+  <script>
+    function run() {
+      alert("Bouton OK");
+      await tableau.extensions.initializeAsync();
+    }
+  </script>
+  
+</body>
+</html>
