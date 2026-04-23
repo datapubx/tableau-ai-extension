@@ -21,6 +21,8 @@
       const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets[0];
 
       const data = await worksheet.getSummaryDataAsync();
+      console.log(data);
+      alert("Lignes: " + data.data.length);
 
       const rows = data.data.map(r => r.map(c => c.value));
 
