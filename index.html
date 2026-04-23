@@ -6,7 +6,7 @@
 
 <body>
 
-  <button onclick="run()">Explain here</button>
+  <button onclick="run()">Explain this</button>
 
   <p id="result">Test</p>
 
@@ -40,6 +40,10 @@
     document.getElementById("result").innerText =
       "Erreur: " + error.message;
   }
+    const summary = rows.map(r => r.join(" - ")).join("\n");
+  
+  document.getElementById("result").innerText =
+    "📊 Analyse des données sélectionnées:\n\n" + summary;
 }
   </script>
 
