@@ -1,3 +1,41 @@
-function run() {
-  alert("Bouton OK");
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/tableau-api"></script>
+</head>
+
+<body>
+  <h3>🤖 AI Explain</h3>
+
+  <button onclick="run()">Explain</button>
+
+  <p id="result">Clique sur Explain</p>
+
+  <script>
+    async function run() {
+
+      document.getElementById("result").innerText = "Analyse...";
+
+      await tableau.extensions.initializeAsync();
+
+      const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets[0];
+
+      const data = await worksheet.getSummaryDataAsync();
+      console.log(data);
+      alert("Lignes: " + data.data.length);
+
+      const rows = data.data.map(r => r.map(c => c.value));
+
+      const response = await fetch("https://hello-tableau-5622660192999875.15.azure.databricksapps.com/explain", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ data: rows })
+      });
+
+      const result = await response.json();
+
+      document.getElementById("result").innerText = result.result;
+    }
+  </script>
+</body>
+</html>
