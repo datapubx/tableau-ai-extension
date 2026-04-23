@@ -8,12 +8,38 @@
 
   <button onclick="run()">Explain</button>
 
+  <p id="result">Clique sur Explain</p>
+
   <script>
-    function run() {
-      alert("Bouton OK");
-      await tableau.extensions.initializeAsync();
+    async function run() {
+
+      try {
+        document.getElementById("result").innerText = "Initialisation...";
+
+        await tableau.extensions.initializeAsync();
+
+        document.getElementById("result").innerText = "Connexion au dashboard...";
+
+        const dashboard = tableau.extensions.dashboardContent.dashboard;
+
+        const worksheets = dashboard.worksheets;
+
+        document.getElementById("result").innerText =
+          "Nombre de feuilles: " + worksheets.length;
+
+        const worksheet = worksheets[0];
+
+        const data = await worksheet.getSummaryDataAsync();
+
+        document.getElementById("result").innerText =
+          "Nombre de lignes: " + data.data.length;
+
+      } catch (error) {
+        document.getElementById("result").innerText =
+          "Erreur: " + error.message;
+      }
     }
   </script>
-  
+
 </body>
 </html>
