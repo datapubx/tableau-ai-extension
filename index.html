@@ -3,47 +3,53 @@
 <head>
   <script src="./tableau.extensions.1.latest.js"></script>
 </head>
+
 <body>
 
-  <button onclick="run()">Explain this</button>
+  <button onclick="run()">Explain</button>
 
-  <p id="result">Test</p>
+  <p id="result">Clique sur Explain</p>
 
   <script>
     async function run() {
 
-  try {
-    await tableau.extensions.initializeAsync();
+      try {
+        document.getElementById("result").innerText = "Analyse en cours...";
 
-    const dashboard = tableau.extensions.dashboardContent?.dashboard;
+        await tableau.extensions.initializeAsync();
 
-    if (!dashboard) {
-      throw new Error("Dashboard non accessible");
+        const dashboard = tableau.extensions.dashboardContent.dashboard;
+        const worksheet = dashboard.worksheets[0];
+
+        // 🔹 récupérer les données sélectionnées
+        const marks = await worksheet.getSelectedMarksAsync();
+
+        const rows = marks.data.map(r => r.map(c => c.value));
+
+        if (rows.length === 0) {
+          document.getElementById("result").innerText =
+            "⚠️ Sélectionne une ou plusieurs lignes dans le dashboard";
+          return;
+        }
+
+        // 🔹 appel API
+        const response = await fetch("https://TON-API/explain", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ data: rows })
+        });
+
+        const result = await response.json();
+
+        document.getElementById("result").innerText = result.result;
+
+      } catch (error) {
+        document.getElementById("result").innerText =
+          "Erreur: " + error.message;
+      }
     }
-
-    const worksheet = dashboard.worksheets[0];
-
-    if (!worksheet) {
-      throw new Error("Aucune worksheet trouvée");
-    }
-
-    const data = await worksheet.getSummaryDataAsync();
-
-    const rows = data.data.map(r => r.map(c => c.value));
-
-    document.getElementById("result").innerText =
-      "Lignes: " + rows.length + "\n\n" +
-      JSON.stringify(rows.slice(0,5), null, 2);
-
-  } catch (error) {
-    document.getElementById("result").innerText =
-      "Erreur: " + error.message;
-  }
-    const summary = rows.map(r => r.join(" - ")).join("\n");
-  
-  document.getElementById("result").innerText =
-    "📊 Analyse des données sélectionnées:\n\n" + summary;
-}
   </script>
 
 </body>
