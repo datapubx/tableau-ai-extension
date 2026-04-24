@@ -6,7 +6,7 @@
 
 <body>
 
-  <button onclick="run()">Explain again</button>
+  <button onclick="run()">Explain this data</button>
 
   <p id="result">Click on Explain</p>
 
@@ -23,30 +23,36 @@
 
         // 🔹 récupérer les données sélectionnées
         const marks = await worksheet.getSelectedMarksAsync();
-                
-        const marks = await worksheet.getSelectedMarksAsync();
-        
-        // 🔥 accès correct
-        const table = marks.data[0];
 
+        console.log("MARKS:", marks);
 
-        console.log(marks);
-        // lignes réelles
-        const rows = table.data.map(row =>
-          row.map(cell => cell.value)
-        );
-        
-        document.getElementById("result").innerText =
-          "Lignes: " + rows.length + "\n\n" +
-          JSON.stringify(rows, null, 2);
-
-        if (rows.length === 0) {
+        // 🔹 sécurité : vérifier structure
+        if (!marks.data || marks.data.length === 0) {
           document.getElementById("result").innerText =
-            "⚠️ Sélectionne une ou plusieurs lignes dans le dashboard";
+            "⚠️ Aucune donnée sélectionnée";
           return;
         }
 
-        // 🔹 appel API
+        const table = marks.data[0];
+
+        if (!table.data || table.data.length === 0) {
+          document.getElementById("result").innerText =
+            "⚠️ Aucune ligne dans la sélection";
+          return;
+        }
+
+        // 🔹 extraction propre des données
+        const rows = table.data.map(row =>
+          row.map(cell => cell.value)
+        );
+
+        console.log("ROWS:", rows);
+
+        // 🔹 affichage debug temporaire
+        document.getElementById("result").innerText =
+          "Lignes: " + rows.length;
+
+        // 🔹 appel API (Replit)
         const response = await fetch("https://95a537d1-8838-4952-b002-b299ee0bc738-00-1uf195blocmut.riker.replit.dev/explain", {
           method: "POST",
           headers: {
@@ -57,9 +63,11 @@
 
         const result = await response.json();
 
+        // 🔹 affichage résultat IA
         document.getElementById("result").innerText = result.result;
 
       } catch (error) {
+        console.error(error);
         document.getElementById("result").innerText =
           "Erreur: " + error.message;
       }
