@@ -24,7 +24,11 @@
         // 🔹 récupérer les données sélectionnées
         const marks = await worksheet.getSelectedMarksAsync();
 
-        const rows = marks.data.map(r => r.map(c => c.value));
+        const rows = marks.data.map(row => {
+          return row.map(cell => {
+            return cell && cell.value !== undefined ? cell.value : cell;
+          });
+        });
 
         if (rows.length === 0) {
           document.getElementById("result").innerText =
