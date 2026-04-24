@@ -6,7 +6,7 @@
 
 <body>
 
-  <button onclick="run()">Explain now</button>
+  <button onclick="run()">Explain again</button>
 
   <p id="result">Click on Explain</p>
 
@@ -23,14 +23,20 @@
 
         // 🔹 récupérer les données sélectionnées
         const marks = await worksheet.getSelectedMarksAsync();
+                
+        const marks = await worksheet.getSelectedMarksAsync();
         
-        const rows = (marks.data || []).map(row =>
-          (row || []).map(cell =>
-            (cell && typeof cell === "object" && "value" in cell)
-              ? cell.value
-              : cell
-          )
+        // 🔥 accès correct
+        const table = marks.data[0];
+        
+        // lignes réelles
+        const rows = table.data.map(row =>
+          row.map(cell => cell.value)
         );
+        
+        document.getElementById("result").innerText =
+          "Lignes: " + rows.length + "\n\n" +
+          JSON.stringify(rows, null, 2);
 
         if (rows.length === 0) {
           document.getElementById("result").innerText =
