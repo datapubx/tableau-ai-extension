@@ -6,7 +6,7 @@
 
 <body>
 
-  <button onclick="run()">Explain this</button>
+  <button onclick="run()">Explain now</button>
 
   <p id="result">Click on Explain</p>
 
@@ -23,12 +23,14 @@
 
         // 🔹 récupérer les données sélectionnées
         const marks = await worksheet.getSelectedMarksAsync();
-
-        const rows = marks.data.map(row => {
-          return row.map(cell => {
-            return cell && cell.value !== undefined ? cell.value : cell;
-          });
-        });
+        
+        const rows = (marks.data || []).map(row =>
+          (row || []).map(cell =>
+            (cell && typeof cell === "object" && "value" in cell)
+              ? cell.value
+              : cell
+          )
+        );
 
         if (rows.length === 0) {
           document.getElementById("result").innerText =
